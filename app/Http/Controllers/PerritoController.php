@@ -4,65 +4,64 @@ namespace App\Http\Controllers;
 
 use App\Perrito;
 use Illuminate\Http\Request;
+use SebastianBergmann\Environment\Console;
 
 class PerritoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
+
+    public function getDogs (){
+
         $perritos = Perrito::all();
 
         return response()->json(['data' => $perritos],200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $perritos = Perrito::create();
+    public function createDog(Request $request){
 
-        return response()->json(['data' => $perritos],200);
+        $rules= [
+            'nombre' => 'required',
+            'color' => 'required',
+            'raza' => 'required',
+        ];
+
+        $quotation = [
+            'nombre' => $request->nombre,
+             'color' => $request->color,
+             'raza' => $request->raza,
+         ];
+
+         $this->validate($request, $rules);
+        // dd($request);
+        $dogCreated = Perrito::create($quotation);
+        return response()->json(['data'=> $dogCreated], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    public function updateDog(Request $request, $id){
+
+        $perrito = Perrito::find($id);
+
+        if($request->has('nombre')){
+            $perrito->nombre = $request->nombre;
+        }
+        if($request->has('color')){
+            $perrito->color = $request->color;
+        }
+        if($request->has('raza')){
+            $perrito->raza = $request->raza;
+        }
+        $perrito->save();
+        return response()->json(['data'=> $perrito], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Perrito  $perrito
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Perrito $perrito)
-    {
-        //
+    public function deleteDog(Request $request, $id){
+
+        $perrito = Perrito::find($id);
+        $perrito->delete();
+        return response()->json(['data'=> $perrito], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Perrito  $perrito
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Perrito $perrito)
-    {
-        //
-    }
+
+
 
     /**
      * Update the specified resource in storage.
@@ -76,14 +75,5 @@ class PerritoController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Perrito  $perrito
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Perrito $perrito)
-    {
-        //
-    }
+
 }

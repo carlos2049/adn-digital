@@ -18,4 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('perritos', 'PerritoCOntroller');
+Route::get('perritos', 'PerritoController@getDogs');
+Route::post('perritos', 'PerritoController@createDog');
+Route::put('perritos/{id}', 'PerritoController@updateDog');
+Route::delete('perritos/{id}', 'PerritoController@deleteDog');
+
+// Route::apiResource('/perritos', 'PerritoCOntroller');
