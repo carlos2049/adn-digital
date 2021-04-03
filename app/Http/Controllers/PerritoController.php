@@ -18,6 +18,7 @@ class PerritoController extends Controller
         return response()->json(['data' => $perritos],200);
     }
 
+
     public function createDog(Request $request){
 
         $validator = Validator::make($request->all(),
@@ -44,17 +45,22 @@ class PerritoController extends Controller
         return response()->json(['data'=> $perritoCreado], 200);
     }
 
+
     public function updateDog(Request $request, $id){
 
         $validator = Validator::make($request->all(),
         [
-            'nombre' => 'required|unique:perritos',
+            'nombre' => 'required',
             'color' => 'required',
             'raza' => 'required',
         ]);
 
         if($validator->fails()){
             return response()->json($validator->messages(), 400);
+        }
+        $buscarPerrito = Perrito::where('nombre',$request->nombre)->count();
+        if($buscarPerrito != 0 ){
+            return response()->json(['message'=> "ya existe un perrito con ese nombre", "success"=> false], 200);
         }
 
         $perrito = Perrito::find($id);
@@ -71,6 +77,7 @@ class PerritoController extends Controller
         $perrito->save();
         return response()->json(['data'=> $perrito], 200);
     }
+
 
     public function deleteDog(Request $request, $id){
 
